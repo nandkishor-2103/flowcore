@@ -1,0 +1,27 @@
+{
+    "name": "flowcore",
+    "version": "1.0.0",
+    "description": "FlowCore - A scalable platform for managing complex projects and team workflows efficiently.",
+    "main": "index.js",
+    "type": "module",
+    "scripts": {
+        "dev": "npx nodemon index.js"
+    },
+    "keywords": [
+        "project-management",
+        "api-creation",
+        "workflow",
+        "team-collaboration",
+        "enterprise",
+        "productivity",
+        "task-tracking",
+        "project-planning",
+        "management-system",
+        "flowcore"
+    ],
+    "author": "nandkishor",
+    "license": "ISC",
+    "devDependencies": {
+        "prettier": "3.8.1"
+    }
+}
