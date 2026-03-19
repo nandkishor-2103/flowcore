@@ -59,11 +59,17 @@ const userSchema = new Schema(
     { timestamps: true },
 );
 
+// Hash password before saving the user document to the database
 userSchema.pre("save", async function (next) {
     if (!this.isModified("password")) return next();
 
     this.password = await bcrypt.hash(this.password, 10);
     next();
 });
+
+// Method to compare the provided password with the hashed password in the database
+userSchema.methods.isPasswordCorrect = async function (password) {
+    return await bcrypt.compare(password, this.password);
+};
 
 export const User = mongoose.model("User", userSchema);
