@@ -2,10 +2,11 @@
     "name": "flowcore",
     "version": "1.0.0",
     "description": "FlowCore - A scalable platform for managing complex projects and team workflows efficiently.",
-    "main": "index.js",
     "type": "module",
+    "main": "index.js",
     "scripts": {
-        "dev": "npx nodemon index.js"
+        "dev": "npx nodemon src/index.js",
+        "start": "node src/index.js"
     },
     "keywords": [
         "project-management",
@@ -23,5 +24,10 @@
     "license": "ISC",
     "devDependencies": {
         "prettier": "3.8.1"
+    },
+    "dependencies": {
+        "cors": "^2.8.6",
+        "dotenv": "^17.3.1",
+        "express": "^5.2.1"
     }
 }
