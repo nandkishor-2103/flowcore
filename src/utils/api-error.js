@@ -1,3 +1,4 @@
+// This file defines a custom error class for handling API errors in a standardized way across the application.
 class ApiError extends Error {
     constructor(
         statusCode,
