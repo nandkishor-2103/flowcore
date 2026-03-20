@@ -4,8 +4,8 @@
 
 ### 1. Product Overview
 
-**Product Name:** Project Camp Backend  
-**Version:** 1.0.0  
+**Product Name:** Project Camp Backend
+**Version:** 1.0.0
 **Product Type:** Backend API for Project Management System
 
 Project Camp Backend is a RESTful API service designed to support collaborative project management. The system enables teams to organize projects, manage tasks with subtasks, maintain project notes, and handle user authentication with role-based access control.
@@ -78,47 +78,47 @@ Project Camp Backend is a RESTful API service designed to support collaborative 
 
 **Authentication Routes** (`/api/v1/auth/`)
 
-- `POST /register` - User registration
-- `POST /login` - User authentication
-- `POST /logout` - User logout (secured)
-- `GET /current-user` - Get current user info (secured)
-- `POST /change-password` - Change user password (secured)
-- `POST /refresh-token` - Refresh access token
-- `GET /verify-email/:verificationToken` - Email verification
-- `POST /forgot-password` - Request password reset
-- `POST /reset-password/:resetToken` - Reset forgotten password
-- `POST /resend-email-verification` - Resend verification email (secured)
+- [x] `POST /register` - User registration
+- [x] `POST /login` - User authentication
+- [ ] `POST /logout` - User logout (secured)
+- [ ] `GET /current-user` - Get current user info (secured)
+- [ ] `POST /change-password` - Change user password (secured)
+- [ ] `POST /refresh-token` - Refresh access token
+- [ ] `GET /verify-email/:verificationToken` - Email verification
+- [ ] `POST /forgot-password` - Request password reset
+- [ ] `POST /reset-password/:resetToken` - Reset forgotten password
+- [ ] `POST /resend-email-verification` - Resend verification email (secured)
 
 **Project Routes** (`/api/v1/projects/`)
 
-- `GET /` - List user projects (secured)
-- `POST /` - Create project (secured)
-- `GET /:projectId` - Get project details (secured, role-based)
-- `PUT /:projectId` - Update project (secured, Admin only)
-- `DELETE /:projectId` - Delete project (secured, Admin only)
-- `GET /:projectId/members` - List project members (secured)
-- `POST /:projectId/members` - Add project member (secured, Admin only)
-- `PUT /:projectId/members/:userId` - Update member role (secured, Admin only)
-- `DELETE /:projectId/members/:userId` - Remove member (secured, Admin only)
+- [ ] `GET /` - List user projects (secured)
+- [ ] `POST /` - Create project (secured)
+- [ ] `GET /:projectId` - Get project details (secured, role-based)
+- [ ] `PUT /:projectId` - Update project (secured, Admin only)
+- [ ] `DELETE /:projectId` - Delete project (secured, Admin only)
+- [ ] `GET /:projectId/members` - List project members (secured)
+- [ ] `POST /:projectId/members` - Add project member (secured, Admin only)
+- [ ] `PUT /:projectId/members/:userId` - Update member role (secured, Admin only)
+- [ ] `DELETE /:projectId/members/:userId` - Remove member (secured, Admin only)
 
 **Task Routes** (`/api/v1/tasks/`)
 
-- `GET /:projectId` - List project tasks (secured, role-based)
-- `POST /:projectId` - Create task (secured, Admin/Project Admin)
-- `GET /:projectId/t/:taskId` - Get task details (secured, role-based)
-- `PUT /:projectId/t/:taskId` - Update task (secured, Admin/Project Admin)
-- `DELETE /:projectId/t/:taskId` - Delete task (secured, Admin/Project Admin)
-- `POST /:projectId/t/:taskId/subtasks` - Create subtask (secured, Admin/Project Admin)
-- `PUT /:projectId/st/:subTaskId` - Update subtask (secured, role-based)
-- `DELETE /:projectId/st/:subTaskId` - Delete subtask (secured, Admin/Project Admin)
+- [ ] `GET /:projectId` - List project tasks (secured, role-based)
+- [ ] `POST /:projectId` - Create task (secured, Admin/Project Admin)
+- [ ] `GET /:projectId/t/:taskId` - Get task details (secured, role-based)
+- [ ] `PUT /:projectId/t/:taskId` - Update task (secured, Admin/Project Admin)
+- [ ] `DELETE /:projectId/t/:taskId` - Delete task (secured, Admin/Project Admin)
+- [ ] `POST /:projectId/t/:taskId/subtasks` - Create subtask (secured, Admin/Project Admin)
+- [ ] `PUT /:projectId/st/:subTaskId` - Update subtask (secured, role-based)
+- [ ] `DELETE /:projectId/st/:subTaskId` - Delete subtask (secured, Admin/Project Admin)
 
 **Note Routes** (`/api/v1/notes/`)
 
-- `GET /:projectId` - List project notes (secured, role-based)
-- `POST /:projectId` - Create note (secured, Admin only)
-- `GET /:projectId/n/:noteId` - Get note details (secured, role-based)
-- `PUT /:projectId/n/:noteId` - Update note (secured, Admin only)
-- `DELETE /:projectId/n/:noteId` - Delete note (secured, Admin only)
+- [ ] `GET /:projectId` - List project notes (secured, role-based)
+- [ ] `POST /:projectId` - Create note (secured, Admin only)
+- [ ] `GET /:projectId/n/:noteId` - Get note details (secured, role-based)
+- [ ] `PUT /:projectId/n/:noteId` - Update note (secured, Admin only)
+- [ ] `DELETE /:projectId/n/:noteId` - Delete note (secured, Admin only)
 
 **Health Check** (`/api/v1/healthcheck/`)
 
