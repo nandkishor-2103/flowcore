@@ -17,16 +17,18 @@ const sendEmail = async function (options) {
     const emailHtml = mailGenatator.generate(options.mailgenContent);
 
     const transporter = nodemailer.createTransport({
-        host: process.env.MAILTRAP_SMPT_HOST,
-        port: process.env.MAILTRAP_SMPT_PORT,
+        host: process.env.MAILTRAP_SMTP_HOST,
+        port: Number(process.env.MAILTRAP_SMTP_PORT),
+        secure: false,
         auth: {
-            user: process.env.MAILTRAP_SMPT_USER,
-            pass: process.env.MAILTRAP_SMPT_PASS,
+            user: process.env.MAILTRAP_SMTP_USER,
+            pass: process.env.MAILTRAP_SMTP_PASS,
         },
+        connectionTimeout: 10000,
     });
 
     const mail = {
-        from: "mail.flowcore@example.com",
+        from: "FlowCore <no-reply@flowcore.com>",
         to: options.email,
         subject: options.subject,
         text: emailTextual,

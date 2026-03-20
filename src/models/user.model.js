@@ -10,9 +10,11 @@ const userSchema = new Schema(
                 url: String,
                 localPath: String,
             },
-            default: {
-                url: `https://placehold.co/200x200`,
-                localPath: "",
+            default: function () {
+                return {
+                    url: `https://api.dicebear.com/9.x/shapes/svg?seed=${this.username || "default"}&size=200`,
+                    localPath: "",
+                };
             },
         },
         username: {
@@ -54,7 +56,7 @@ const userSchema = new Schema(
         emailVerificationToken: {
             type: String,
         },
-        emailverificationExpiry: {
+        emailVerificationExpiry: {
             type: Date,
         },
     },
@@ -63,13 +65,11 @@ const userSchema = new Schema(
 
 // ==================Hooks=================
 // Hash password before saving the user document to the database
-userSchema.pre("save", async function (next) {
-    if (!this.isModified("password")) return next();
+userSchema.pre("save", async function () {
+    if (!this.isModified("password")) return;
 
     this.password = await bcrypt.hash(this.password, 10);
-    next();
 });
-
 
 // ==================Methods=================
 // Method to compare the provided password with the hashed password in the database
@@ -88,9 +88,9 @@ userSchema.methods.generateAccessToken = function () {
         process.env.ACCESS_TOKEN_SECRET,
         {
             expiresIn: process.env.ACCESS_TOKEN_EXPIRY,
-        }
-    )
-}
+        },
+    );
+};
 
 // Method to generate a refresh token for the user
 userSchema.methods.generateRefreshToken = function () {
@@ -101,23 +101,26 @@ userSchema.methods.generateRefreshToken = function () {
         process.env.REFRESH_TOKEN_SECRET,
         {
             expiresIn: process.env.REFRESH_TOKEN_EXPIRY,
-        }
-    )
-}
+        },
+    );
+};
 
 // Method to generate a temporary token for password reset or email verification
 userSchema.methods.generateTemporaryToken = function () {
-    const unHashedToken =crypto.randomBytes(32).toString("hex");
+    const unHashedToken = crypto.randomBytes(32).toString("hex");
 
-    const hashedToken = crypto.createHash("sha256").update(unHashedToken).digest("hex");
+    const hashedToken = crypto
+        .createHash("sha256")
+        .update(unHashedToken)
+        .digest("hex");
 
-    const tokenExpiry = Date.now() + (20 * 60 * 1000); // Token valid for 20 minutes
+    const tokenExpiry = Date.now() + 20 * 60 * 1000; // Token valid for 20 minutes
 
     return {
         unHashedToken,
         hashedToken,
         tokenExpiry,
     };
-}
+};
 
 export const User = mongoose.model("User", userSchema);

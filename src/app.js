@@ -18,16 +18,21 @@ app.use(
     }),
 );
 
+app.get("/", (req, res) => {
+    res.send("Welcome to FlowCore API!");
+});
 
 // ================== Route Configuration ==================
 import healthCheckRouter from "./routes/healtcheck.route.js";
+import authRouter from "./routes/auth.route.js";;
 
 
 // ================== Health Check Route ==================
 app.use("/api/v1/healthcheck", healthCheckRouter);
 
-app.get("/", (req, res) => {
-    res.send("Welcome to FlowCore API!");
-});
+// ================== Auth Routes ==================
+app.use("/api/v1/auth", authRouter);
+
+
 
 export default app;
