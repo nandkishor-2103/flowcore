@@ -142,7 +142,7 @@ const logoutUser = asyncHandler(async function (req, res) {
             },
         },
         {
-            new: true,
+            returnDocument: 'after',
         },
     );
 
