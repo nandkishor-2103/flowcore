@@ -8,6 +8,7 @@ import {
     forgotPasswordMailgenContent,
 } from "../utils/mail.js";
 import jwt from "jsonwebtoken";
+import crypto from "crypto";
 
 const generateAccessAndRefreshTokens = async function (userId) {
     try {
@@ -63,7 +64,7 @@ const registerUser = asyncHandler(async function (req, res) {
         subject: "Please verify your email",
         mailgenContent: emailVerificationMailgenContent(
             user.username,
-            `${req.protocol}://${req.get("host")}/api/v1/users/verify-email/${unHashedToken}`,
+            `${req.protocol}://${req.get("host")}/api/v1/auth/verify-email/${unHashedToken}`,
         ),
     });
 
@@ -209,7 +210,7 @@ const verifyEmail = asyncHandler(async function (req, res) {
         .json(
             new ApiResponse(
                 200,
-                { isEmailVerified },
+                { user: { isEmailVerified: user.isEmailVerified } },
                 "Email verified successfully. You can now login to your account",
             ),
         );
@@ -240,7 +241,7 @@ const resendEmailVerification = asyncHandler(async function (req, res) {
         subject: "Please verify your email",
         mailgenContent: emailVerificationMailgenContent(
             user.username,
-            `${req.protocol}://${req.get("host")}/api/v1/users/verify-email/${unHashedToken}`,
+            `${req.protocol}://${req.get("host")}/api/v1/auth/verify-email/${unHashedToken}`,
         ),
     });
 
@@ -334,7 +335,7 @@ const forgotPasswordRequest = asyncHandler(async function (req, res) {
         subject: "Password Reset Request",
         mailgenContent: forgotPasswordMailgenContent(
             user.username,
-            `${req.protocol}://${req.get("host")}/api/v1/users/forgot-password/${unHashedToken}`,
+            `${req.protocol}://${req.get("host")}/api/v1/auth/reset-password/${unHashedToken}`,
         ),
     });
 
