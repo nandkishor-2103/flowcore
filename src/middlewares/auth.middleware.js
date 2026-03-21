@@ -1,8 +1,13 @@
 import { User } from "../models/user.model.js";
+import { ProjectMember } from "../models/projectmember.model.js";
+
 import { ApiError } from "../utils/api-error.js";
 import { asyncHandler } from "../utils/async-handler.js";
 import jwt from "jsonwebtoken";
+import mongoose from "mongoose";
 
+// =================== JWT Authentication Middleware ===================
+// Middleware to verify JWT and authenticate user
 export const verifyJWT = asyncHandler(async function (req, res, next) {
     const token =
         req.cookies?.accessToken ||
@@ -26,3 +31,37 @@ export const verifyJWT = asyncHandler(async function (req, res, next) {
         throw new ApiError(401, "Invalid access token");
     }
 });
+
+// =================== Role-Based Authorization Middleware ===================
+// Middleware to check if user has required role(s)
+export const authorizeRoles = function (roles = []) {
+    asyncHandler(async function (req, res, next) {
+        const { projectId } = req.params;
+
+        if (!projectId) {
+            throw new ApiError(400, "Project ID is required");
+        }
+
+        const project = await ProjectMember.findOne({
+            projects: new mongoose.Types.ObjectId(projectId),
+            user: new mongoose.Types.ObjectId(req.user._id),
+        });
+
+        if (!project) {
+            throw new ApiError(403, "Project not found");
+        }
+
+        const userRole = project?.role;
+
+        req.user.role = userRole;
+
+        if (!roles.includes(userRole)) {
+            throw new ApiError(
+                403,
+                "You do not have permission to perform this action",
+            );
+        }
+
+        next();
+    });
+};
