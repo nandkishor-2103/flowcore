@@ -1,0 +1,967 @@
+{
+    "info": {
+        "_postman_id": "9d6847e3-4a5b-40ee-a6fc-5fdf2ec6a001",
+        "name": "FlowCore API",
+        "description": "Import-ready Postman collection for FlowCore APIs (Auth, Projects, Members, Tasks, Subtasks, Notes, Health).",
+        "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+    },
+    "auth": {
+        "type": "bearer",
+        "bearer": [
+            {
+                "key": "token",
+                "value": "{{accessToken}}",
+                "type": "string"
+            }
+        ]
+    },
+    "event": [
+        {
+            "listen": "prerequest",
+            "script": {
+                "type": "text/javascript",
+                "exec": ["// Collection-level pre-request script"]
+            }
+        },
+        {
+            "listen": "test",
+            "script": {
+                "type": "text/javascript",
+                "exec": [
+                    "// Collection-level tests",
+                    "pm.test('Response time is less than 5s', function () {",
+                    "  pm.expect(pm.response.responseTime).to.be.below(5000);",
+                    "});"
+                ]
+            }
+        }
+    ],
+    "item": [
+        {
+            "name": "00 Health",
+            "item": [
+                {
+                    "name": "GET Healthcheck",
+                    "request": {
+                        "auth": {
+                            "type": "noauth"
+                        },
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{baseUrl}}/api/v1/healthcheck/",
+                            "host": ["{{baseUrl}}"],
+                            "path": ["api", "v1", "healthcheck", ""]
+                        },
+                        "description": "System health endpoint"
+                    },
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "type": "text/javascript",
+                                "exec": [
+                                    "pm.test('Status is 200', function () {",
+                                    "  pm.response.to.have.status(200);",
+                                    "});"
+                                ]
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "01 Auth",
+            "item": [
+                {
+                    "name": "POST Register",
+                    "request": {
+                        "auth": {
+                            "type": "noauth"
+                        },
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"email\": \"admin1@example.com\",\n  \"username\": \"admin_one\",\n  \"password\": \"Strong@123\",\n  \"fullName\": \"Admin One\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/api/v1/auth/register",
+                            "host": ["{{baseUrl}}"],
+                            "path": ["api", "v1", "auth", "register"]
+                        }
+                    }
+                },
+                {
+                    "name": "POST Login (Admin)",
+                    "request": {
+                        "auth": {
+                            "type": "noauth"
+                        },
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"email\": \"admin1@example.com\",\n  \"password\": \"Strong@123\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/api/v1/auth/login",
+                            "host": ["{{baseUrl}}"],
+                            "path": ["api", "v1", "auth", "login"]
+                        }
+                    },
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "type": "text/javascript",
+                                "exec": [
+                                    "pm.test('Login success', function () {",
+                                    "  pm.response.to.have.status(200);",
+                                    "});",
+                                    "const res = pm.response.json();",
+                                    "if (res?.data?.accessToken) pm.environment.set('accessToken', res.data.accessToken);",
+                                    "if (res?.data?.refreshToken) pm.environment.set('refreshToken', res.data.refreshToken);"
+                                ]
+                            }
+                        }
+                    ]
+                },
+                {
+                    "name": "POST Logout",
+                    "request": {
+                        "method": "POST",
+                        "header": [],
+                        "url": {
+                            "raw": "{{baseUrl}}/api/v1/auth/logout",
+                            "host": ["{{baseUrl}}"],
+                            "path": ["api", "v1", "auth", "logout"]
+                        }
+                    }
+                },
+                {
+                    "name": "GET Current User",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{baseUrl}}/api/v1/auth/current-user",
+                            "host": ["{{baseUrl}}"],
+                            "path": ["api", "v1", "auth", "current-user"]
+                        }
+                    }
+                },
+                {
+                    "name": "POST Change Password",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"currentPassword\": \"Strong@123\",\n  \"newPassword\": \"NewStrong@123\",\n  \"confirmPassword\": \"NewStrong@123\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/api/v1/auth/change-password",
+                            "host": ["{{baseUrl}}"],
+                            "path": ["api", "v1", "auth", "change-password"]
+                        }
+                    }
+                },
+                {
+                    "name": "POST Refresh Token",
+                    "request": {
+                        "auth": {
+                            "type": "noauth"
+                        },
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"refreshToken\": \"{{refreshToken}}\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/api/v1/auth/refresh-token",
+                            "host": ["{{baseUrl}}"],
+                            "path": ["api", "v1", "auth", "refresh-token"]
+                        }
+                    },
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "type": "text/javascript",
+                                "exec": [
+                                    "const res = pm.response.json();",
+                                    "if (res?.data?.accessToken) pm.environment.set('accessToken', res.data.accessToken);",
+                                    "if (res?.data?.refreshToken) pm.environment.set('refreshToken', res.data.refreshToken);"
+                                ]
+                            }
+                        }
+                    ]
+                },
+                {
+                    "name": "GET Verify Email",
+                    "request": {
+                        "auth": {
+                            "type": "noauth"
+                        },
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{baseUrl}}/api/v1/auth/verify-email/{{verificationToken}}",
+                            "host": ["{{baseUrl}}"],
+                            "path": [
+                                "api",
+                                "v1",
+                                "auth",
+                                "verify-email",
+                                "{{verificationToken}}"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "POST Forgot Password",
+                    "request": {
+                        "auth": {
+                            "type": "noauth"
+                        },
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"email\": \"admin1@example.com\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/api/v1/auth/forgot-password",
+                            "host": ["{{baseUrl}}"],
+                            "path": ["api", "v1", "auth", "forgot-password"]
+                        }
+                    }
+                },
+                {
+                    "name": "POST Reset Password",
+                    "request": {
+                        "auth": {
+                            "type": "noauth"
+                        },
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"newPassword\": \"Strong@123\",\n  \"confirmPassword\": \"Strong@123\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/api/v1/auth/reset-password/{{resetToken}}",
+                            "host": ["{{baseUrl}}"],
+                            "path": [
+                                "api",
+                                "v1",
+                                "auth",
+                                "reset-password",
+                                "{{resetToken}}"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "POST Resend Email Verification",
+                    "request": {
+                        "method": "POST",
+                        "header": [],
+                        "url": {
+                            "raw": "{{baseUrl}}/api/v1/auth/resend-email-verification",
+                            "host": ["{{baseUrl}}"],
+                            "path": [
+                                "api",
+                                "v1",
+                                "auth",
+                                "resend-email-verification"
+                            ]
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "name": "02 Projects",
+            "item": [
+                {
+                    "name": "GET List Projects",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{baseUrl}}/api/v1/projects/",
+                            "host": ["{{baseUrl}}"],
+                            "path": ["api", "v1", "projects", ""]
+                        }
+                    }
+                },
+                {
+                    "name": "POST Create Project",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"name\": \"FlowCore Demo Project\",\n  \"description\": \"Project for API testing\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/api/v1/projects/",
+                            "host": ["{{baseUrl}}"],
+                            "path": ["api", "v1", "projects", ""]
+                        }
+                    },
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "type": "text/javascript",
+                                "exec": [
+                                    "const res = pm.response.json();",
+                                    "if (res?.data?._id) pm.environment.set('projectId', res.data._id);"
+                                ]
+                            }
+                        }
+                    ]
+                },
+                {
+                    "name": "GET Project By ID",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{baseUrl}}/api/v1/projects/{{projectId}}",
+                            "host": ["{{baseUrl}}"],
+                            "path": ["api", "v1", "projects", "{{projectId}}"]
+                        }
+                    }
+                },
+                {
+                    "name": "PUT Update Project",
+                    "request": {
+                        "method": "PUT",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"name\": \"FlowCore Demo Project Updated\",\n  \"description\": \"Updated description\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/api/v1/projects/{{projectId}}",
+                            "host": ["{{baseUrl}}"],
+                            "path": ["api", "v1", "projects", "{{projectId}}"]
+                        }
+                    }
+                },
+                {
+                    "name": "DELETE Project",
+                    "request": {
+                        "method": "DELETE",
+                        "header": [],
+                        "url": {
+                            "raw": "{{baseUrl}}/api/v1/projects/{{projectId}}",
+                            "host": ["{{baseUrl}}"],
+                            "path": ["api", "v1", "projects", "{{projectId}}"]
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "name": "03 Project Members",
+            "item": [
+                {
+                    "name": "GET Project Members",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{baseUrl}}/api/v1/projects/{{projectId}}/members",
+                            "host": ["{{baseUrl}}"],
+                            "path": [
+                                "api",
+                                "v1",
+                                "projects",
+                                "{{projectId}}",
+                                "members"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "POST Add Member",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"email\": \"projectadmin1@example.com\",\n  \"role\": \"project_admin\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/api/v1/projects/{{projectId}}/members",
+                            "host": ["{{baseUrl}}"],
+                            "path": [
+                                "api",
+                                "v1",
+                                "projects",
+                                "{{projectId}}",
+                                "members"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "PUT Update Member Role",
+                    "request": {
+                        "method": "PUT",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"newRole\": \"member\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/api/v1/projects/{{projectId}}/members/{{userId}}",
+                            "host": ["{{baseUrl}}"],
+                            "path": [
+                                "api",
+                                "v1",
+                                "projects",
+                                "{{projectId}}",
+                                "members",
+                                "{{userId}}"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "DELETE Remove Member",
+                    "request": {
+                        "method": "DELETE",
+                        "header": [],
+                        "url": {
+                            "raw": "{{baseUrl}}/api/v1/projects/{{projectId}}/members/{{userId}}",
+                            "host": ["{{baseUrl}}"],
+                            "path": [
+                                "api",
+                                "v1",
+                                "projects",
+                                "{{projectId}}",
+                                "members",
+                                "{{userId}}"
+                            ]
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "name": "04 Tasks",
+            "item": [
+                {
+                    "name": "GET List Tasks",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{baseUrl}}/api/v1/tasks/{{projectId}}",
+                            "host": ["{{baseUrl}}"],
+                            "path": ["api", "v1", "tasks", "{{projectId}}"]
+                        }
+                    }
+                },
+                {
+                    "name": "POST Create Task (JSON)",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"title\": \"Initial Setup\",\n  \"description\": \"Setup project modules\",\n  \"status\": \"todo\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/api/v1/tasks/{{projectId}}",
+                            "host": ["{{baseUrl}}"],
+                            "path": ["api", "v1", "tasks", "{{projectId}}"]
+                        }
+                    },
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "type": "text/javascript",
+                                "exec": [
+                                    "const res = pm.response.json();",
+                                    "if (res?.data?._id) pm.environment.set('taskId', res.data._id);"
+                                ]
+                            }
+                        }
+                    ]
+                },
+                {
+                    "name": "POST Create Task (Form-Data + Attachments)",
+                    "request": {
+                        "method": "POST",
+                        "header": [],
+                        "body": {
+                            "mode": "formdata",
+                            "formdata": [
+                                {
+                                    "key": "title",
+                                    "value": "Initial Setup with files",
+                                    "type": "text"
+                                },
+                                {
+                                    "key": "description",
+                                    "value": "Setup task with attachment",
+                                    "type": "text"
+                                },
+                                {
+                                    "key": "status",
+                                    "value": "in_progress",
+                                    "type": "text"
+                                },
+                                {
+                                    "key": "attachments",
+                                    "type": "file",
+                                    "src": ""
+                                }
+                            ]
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/api/v1/tasks/{{projectId}}",
+                            "host": ["{{baseUrl}}"],
+                            "path": ["api", "v1", "tasks", "{{projectId}}"]
+                        }
+                    }
+                },
+                {
+                    "name": "GET Task By ID",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{baseUrl}}/api/v1/tasks/{{projectId}}/t/{{taskId}}",
+                            "host": ["{{baseUrl}}"],
+                            "path": [
+                                "api",
+                                "v1",
+                                "tasks",
+                                "{{projectId}}",
+                                "t",
+                                "{{taskId}}"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "PUT Update Task",
+                    "request": {
+                        "method": "PUT",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"title\": \"Initial Setup Updated\",\n  \"status\": \"done\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/api/v1/tasks/{{projectId}}/t/{{taskId}}",
+                            "host": ["{{baseUrl}}"],
+                            "path": [
+                                "api",
+                                "v1",
+                                "tasks",
+                                "{{projectId}}",
+                                "t",
+                                "{{taskId}}"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "DELETE Task",
+                    "request": {
+                        "method": "DELETE",
+                        "header": [],
+                        "url": {
+                            "raw": "{{baseUrl}}/api/v1/tasks/{{projectId}}/t/{{taskId}}",
+                            "host": ["{{baseUrl}}"],
+                            "path": [
+                                "api",
+                                "v1",
+                                "tasks",
+                                "{{projectId}}",
+                                "t",
+                                "{{taskId}}"
+                            ]
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "name": "05 Subtasks",
+            "item": [
+                {
+                    "name": "POST Create Subtask",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"title\": \"Setup DB indexes\",\n  \"isCompleted\": false\n}"
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/api/v1/tasks/{{projectId}}/t/{{taskId}}/subtasks",
+                            "host": ["{{baseUrl}}"],
+                            "path": [
+                                "api",
+                                "v1",
+                                "tasks",
+                                "{{projectId}}",
+                                "t",
+                                "{{taskId}}",
+                                "subtasks"
+                            ]
+                        }
+                    },
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "type": "text/javascript",
+                                "exec": [
+                                    "const res = pm.response.json();",
+                                    "if (res?.data?._id) pm.environment.set('subtaskId', res.data._id);"
+                                ]
+                            }
+                        }
+                    ]
+                },
+                {
+                    "name": "PUT Update Subtask",
+                    "request": {
+                        "method": "PUT",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"isCompleted\": true\n}"
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/api/v1/tasks/{{projectId}}/st/{{subtaskId}}",
+                            "host": ["{{baseUrl}}"],
+                            "path": [
+                                "api",
+                                "v1",
+                                "tasks",
+                                "{{projectId}}",
+                                "st",
+                                "{{subtaskId}}"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "DELETE Subtask",
+                    "request": {
+                        "method": "DELETE",
+                        "header": [],
+                        "url": {
+                            "raw": "{{baseUrl}}/api/v1/tasks/{{projectId}}/st/{{subtaskId}}",
+                            "host": ["{{baseUrl}}"],
+                            "path": [
+                                "api",
+                                "v1",
+                                "tasks",
+                                "{{projectId}}",
+                                "st",
+                                "{{subtaskId}}"
+                            ]
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "name": "06 Notes",
+            "item": [
+                {
+                    "name": "GET List Notes",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{baseUrl}}/api/v1/notes/{{projectId}}",
+                            "host": ["{{baseUrl}}"],
+                            "path": ["api", "v1", "notes", "{{projectId}}"]
+                        }
+                    }
+                },
+                {
+                    "name": "POST Create Note",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"content\": \"Kickoff note: project timeline finalized.\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/api/v1/notes/{{projectId}}",
+                            "host": ["{{baseUrl}}"],
+                            "path": ["api", "v1", "notes", "{{projectId}}"]
+                        }
+                    },
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "type": "text/javascript",
+                                "exec": [
+                                    "const res = pm.response.json();",
+                                    "if (res?.data?._id) pm.environment.set('noteId', res.data._id);"
+                                ]
+                            }
+                        }
+                    ]
+                },
+                {
+                    "name": "GET Note By ID",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{baseUrl}}/api/v1/notes/{{projectId}}/n/{{noteId}}",
+                            "host": ["{{baseUrl}}"],
+                            "path": [
+                                "api",
+                                "v1",
+                                "notes",
+                                "{{projectId}}",
+                                "n",
+                                "{{noteId}}"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "PUT Update Note",
+                    "request": {
+                        "method": "PUT",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"content\": \"Kickoff note updated after stakeholder review.\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/api/v1/notes/{{projectId}}/n/{{noteId}}",
+                            "host": ["{{baseUrl}}"],
+                            "path": [
+                                "api",
+                                "v1",
+                                "notes",
+                                "{{projectId}}",
+                                "n",
+                                "{{noteId}}"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "DELETE Note",
+                    "request": {
+                        "method": "DELETE",
+                        "header": [],
+                        "url": {
+                            "raw": "{{baseUrl}}/api/v1/notes/{{projectId}}/n/{{noteId}}",
+                            "host": ["{{baseUrl}}"],
+                            "path": [
+                                "api",
+                                "v1",
+                                "notes",
+                                "{{projectId}}",
+                                "n",
+                                "{{noteId}}"
+                            ]
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "name": "99 Negative & Security",
+            "item": [
+                {
+                    "name": "NEG Missing Token - Get Projects",
+                    "request": {
+                        "auth": {
+                            "type": "noauth"
+                        },
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{baseUrl}}/api/v1/projects/",
+                            "host": ["{{baseUrl}}"],
+                            "path": ["api", "v1", "projects", ""]
+                        }
+                    }
+                },
+                {
+                    "name": "NEG Invalid ProjectId - Get Tasks",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{baseUrl}}/api/v1/tasks/invalid-id",
+                            "host": ["{{baseUrl}}"],
+                            "path": ["api", "v1", "tasks", "invalid-id"]
+                        }
+                    }
+                },
+                {
+                    "name": "NEG Missing Required Field - Create Note",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{}"
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/api/v1/notes/{{projectId}}",
+                            "host": ["{{baseUrl}}"],
+                            "path": ["api", "v1", "notes", "{{projectId}}"]
+                        }
+                    }
+                }
+            ]
+        }
+    ],
+    "variable": [
+        {
+            "key": "baseUrl",
+            "value": "http://localhost:8080"
+        },
+        {
+            "key": "accessToken",
+            "value": ""
+        },
+        {
+            "key": "refreshToken",
+            "value": ""
+        },
+        {
+            "key": "projectId",
+            "value": ""
+        },
+        {
+            "key": "taskId",
+            "value": ""
+        },
+        {
+            "key": "subtaskId",
+            "value": ""
+        },
+        {
+            "key": "noteId",
+            "value": ""
+        },
+        {
+            "key": "userId",
+            "value": ""
+        },
+        {
+            "key": "verificationToken",
+            "value": ""
+        },
+        {
+            "key": "resetToken",
+            "value": ""
+        }
+    ]
+}

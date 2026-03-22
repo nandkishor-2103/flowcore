@@ -150,6 +150,9 @@ const logoutUser = asyncHandler(async function (req, res) {
             $set: {
                 refreshToken: "",
             },
+            $inc: {
+                tokenVersion: 1,
+            },
         },
         {
             returnDocument: "after",
@@ -381,6 +384,8 @@ const resetForgottenPassword = asyncHandler(async function (req, res) {
     user.forgotPasswordExpiry = undefined;
 
     user.password = newPassword;
+    user.refreshToken = "";
+    user.tokenVersion += 1;
     await user.save();
 
     return res
@@ -419,6 +424,8 @@ const changeCurrentPassword = asyncHandler(async function (req, res) {
     }
 
     user.password = newPassword;
+    user.refreshToken = "";
+    user.tokenVersion += 1;
     await user.save();
 
     return res

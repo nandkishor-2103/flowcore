@@ -25,6 +25,11 @@ export const verifyJWT = asyncHandler(async function (req, res, next) {
         if (!user) {
             throw new ApiError(401, "Invalid access token");
         }
+
+        if ((decodedToken?.tokenVersion ?? -1) !== user.tokenVersion) {
+            throw new ApiError(401, "Access token has been revoked");
+        }
+
         req.user = user;
         next();
     } catch (error) {

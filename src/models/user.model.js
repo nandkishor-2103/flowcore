@@ -47,6 +47,10 @@ const userSchema = new Schema(
         refreshToken: {
             type: String,
         },
+        tokenVersion: {
+            type: Number,
+            default: 0,
+        },
         forgotPasswordToken: {
             type: String,
         },
@@ -84,6 +88,7 @@ userSchema.methods.generateAccessToken = function () {
             _id: this._id,
             username: this.username,
             email: this.email,
+            tokenVersion: this.tokenVersion,
         },
         process.env.ACCESS_TOKEN_SECRET,
         {
