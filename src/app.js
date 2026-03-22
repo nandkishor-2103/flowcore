@@ -29,7 +29,7 @@ app.get("/", (req, res) => {
 import healthCheckRouter from "./routes/healtcheck.route.js";
 import authRouter from "./routes/auth.route.js";
 import projectRouter from "./routes/project.routes.js";
-
+import taskRouter from "./routes/task.routes.js";
 
 // ================== Health Check Route ==================
 app.use("/api/v1/healthcheck", healthCheckRouter);
@@ -39,6 +39,9 @@ app.use("/api/v1/auth", authRouter);
 
 // ================== Project Routes ==================
 app.use("/api/v1/projects", projectRouter);
+
+// ================== Task Routes ==================
+app.use("/api/v1/tasks", taskRouter);
 
 // ================== Global Error Handling Middleware ==================
 app.use(errorHandler);
