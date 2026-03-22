@@ -35,7 +35,7 @@ export const verifyJWT = asyncHandler(async function (req, res, next) {
 // =================== Role-Based Authorization Middleware ===================
 // Middleware to check if user has required role(s)
 export const authorizeRoles = function (roles = []) {
-    asyncHandler(async function (req, res, next) {
+    return asyncHandler(async function (req, res, next) {
         const { projectId } = req.params;
 
         if (!projectId) {
