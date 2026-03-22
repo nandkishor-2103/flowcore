@@ -9,9 +9,9 @@ import mongoose from "mongoose";
 // =================== JWT Authentication Middleware ===================
 // Middleware to verify JWT and authenticate user
 export const verifyJWT = asyncHandler(async function (req, res, next) {
+    const authHeader = req.header("Authorization");
     const token =
-        req.cookies?.accessToken ||
-        req.header["Authorization"]?.replace("Bearer ", "");
+        req.cookies?.accessToken || authHeader?.replace("Bearer ", "");
 
     if (!token) {
         throw new ApiError(401, "Unauthorized request");
@@ -42,9 +42,11 @@ export const authorizeRoles = function (roles = []) {
             throw new ApiError(400, "Project ID is required");
         }
 
+        const projectObjectId = new mongoose.Types.ObjectId(projectId);
+
         const project = await ProjectMember.findOne({
-            projects: new mongoose.Types.ObjectId(projectId),
             user: new mongoose.Types.ObjectId(req.user._id),
+            $or: [{ project: projectObjectId }, { projects: projectObjectId }],
         });
 
         if (!project) {
